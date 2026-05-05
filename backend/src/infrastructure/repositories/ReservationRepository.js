@@ -15,10 +15,12 @@ class ReservationRepository {
         ];
         const result = await pool.query(query, values);
         const row = result.rows[0];
-        return new Reservation(
+        const res = new Reservation(
             row.id, row.client_id, row.room_id, row.check_in_date,
             row.check_out_date, row.number_of_guests, row.status, row.total_price
         );
+        res.discountPercent = row.discount_percent || 0;
+        return res;
     }
 
     async findAll() {
@@ -26,7 +28,7 @@ class ReservationRepository {
             SELECT 
                 r.id, r.client_id, r.room_id, r.check_in_date, r.check_out_date,
                 r.number_of_guests, r.status, r.total_price, r.created_at,
-                r.checked_in_at, r.checked_out_at,
+                r.checked_in_at, r.checked_out_at, r.discount_percent,
                 c.first_name, c.last_name, c.id_card_number,
                 rm.room_number, rm.type
             FROM reservations r
@@ -41,6 +43,7 @@ class ReservationRepository {
                 row.check_in_date, row.check_out_date,
                 row.number_of_guests, row.status, row.total_price
             );
+            reservation.discountPercent = row.discount_percent || 0;
             reservation.clientName = `${row.first_name} ${row.last_name}`;
             reservation.clientIdCard = row.id_card_number;
             reservation.roomNumber = row.room_number;
@@ -50,32 +53,45 @@ class ReservationRepository {
     }
 
     async findById(id) {
-        const query = `SELECT * FROM reservations WHERE id = $1`;
+        const query = `SELECT *, discount_percent FROM reservations WHERE id = $1`;
         const result = await pool.query(query, [id]);
         if (result.rows.length === 0) return null;
         const row = result.rows[0];
-        return new Reservation(
+        const reservation = new Reservation(
             row.id, row.client_id, row.room_id, row.check_in_date,
             row.check_out_date, row.number_of_guests, row.status, row.total_price
         );
+        reservation.discountPercent = row.discount_percent || 0;
+        return reservation;
     }
 
     async findByClient(clientId) {
-        const query = `SELECT * FROM reservations WHERE client_id = $1 ORDER BY check_in_date DESC`;
-        const result = await pool.query(query, [clientId]);
-        return result.rows.map(row => new Reservation(
+    const query = `
+        SELECT r.*, rm.room_number, r.cancellation_fee
+        FROM reservations r
+        JOIN rooms rm ON r.room_id = rm.id
+        WHERE r.client_id = $1
+        ORDER BY r.check_in_date DESC
+    `;
+    const result = await pool.query(query, [clientId]);
+    return result.rows.map(row => {
+        const reservation = new Reservation(
             row.id, row.client_id, row.room_id,
             row.check_in_date, row.check_out_date,
             row.number_of_guests, row.status, row.total_price
-        ));
-    }
+        );
+        reservation.roomNumber = row.room_number;
+        reservation.cancellationFee = row.cancellation_fee; // ajout
+        return reservation;
+    });
+}
 
     async update(reservation) {
         const query = `
             UPDATE reservations 
             SET client_id = $1, room_id = $2, check_in_date = $3, check_out_date = $4,
-                number_of_guests = $5, status = $6, total_price = $7, checked_in_at = $8, 
-                checked_out_at = $9, discount_percent = COALESCE($11, discount_percent)
+                number_of_guests = $5, status = $6, total_price = $7, 
+                checked_in_at = $8, checked_out_at = $9, discount_percent = $11
             WHERE id = $10
             RETURNING *
         `;
@@ -88,10 +104,12 @@ class ReservationRepository {
         const result = await pool.query(query, values);
         if (result.rows.length === 0) return null;
         const row = result.rows[0];
-        return new Reservation(
+        const updated = new Reservation(
             row.id, row.client_id, row.room_id, row.check_in_date, row.check_out_date,
             row.number_of_guests, row.status, row.total_price
         );
+        updated.discountPercent = row.discount_percent || 0;
+        return updated;
     }
 
     async cancel(id) {
@@ -99,10 +117,12 @@ class ReservationRepository {
         const result = await pool.query(query, [id]);
         if (result.rows.length === 0) return null;
         const row = result.rows[0];
-        return new Reservation(
+        const reservation = new Reservation(
             row.id, row.client_id, row.room_id, row.check_in_date,
             row.check_out_date, row.number_of_guests, row.status, row.total_price
         );
+        reservation.discountPercent = row.discount_percent || 0;
+        return reservation;
     }
 
     async setCancellationFee(id, fee) {

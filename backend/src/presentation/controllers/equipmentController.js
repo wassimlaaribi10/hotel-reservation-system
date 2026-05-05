@@ -33,7 +33,10 @@ exports.delete = async (req, res) => {
 exports.addToRoom = async (req, res) => {
     const { roomId, equipmentId } = req.params;
     try {
-        await pool.query('INSERT INTO room_equipment (room_id, equipment_id) VALUES ($1, $2) ON CONFLICT DO NOTHING', [roomId, equipmentId]);
+        await pool.query(
+            'INSERT INTO room_equipment (room_id, equipment_id) VALUES ($1, $2) ON CONFLICT DO NOTHING',
+            [roomId, equipmentId]
+        );
         res.status(201).json({ message: 'Equipment added to room' });
     } catch (err) {
         res.status(500).json({ error: err.message });

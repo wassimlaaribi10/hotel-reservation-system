@@ -45,11 +45,6 @@ router.post('/reservations/:reservationId/invoice', authMiddleware, receptionist
 router.get('/reservations/:reservationId/invoice', authMiddleware, invoiceController.getInvoiceByReservation);
 router.get('/clients/:clientId/invoices', authMiddleware, receptionistOrAdmin, invoiceController.getClientInvoices);
 
-// Equipment assignment
-router.post('/rooms/:roomId/equipment/:equipmentId', authMiddleware, adminOnly, roomController.addEquipment);
-router.delete('/rooms/:roomId/equipment/:equipmentId', authMiddleware, adminOnly, roomController.removeEquipment);
-
-
 
 // Equipment management (admin only)
 router.get('/equipment', authMiddleware, adminOnly, equipmentController.getAll);
@@ -60,6 +55,7 @@ router.delete('/equipment/:id', authMiddleware, adminOnly, equipmentController.d
 router.post('/rooms/:roomId/equipment/:equipmentId', authMiddleware, adminOnly, equipmentController.addToRoom);
 router.delete('/rooms/:roomId/equipment/:equipmentId', authMiddleware, adminOnly, equipmentController.removeFromRoom);
 router.get('/rooms/:roomId/equipment', authMiddleware, adminOnly, equipmentController.getRoomEquipment);
+
 
 
 module.exports = router;

@@ -58,27 +58,33 @@ class ReservationUseCases {
         return await this.reservationRepository.update(reservation);
     }
 
-    async checkIn(reservationId) {
-        const reservation = await this.reservationRepository.findById(reservationId);
-        if (!reservation) throw new Error('Reservation not found');
-        reservation.checkIn(); // domain business rule
-        return await this.reservationRepository.update(reservation);
+   async checkIn(reservationId) {
+    const reservation = await this.reservationRepository.findById(reservationId);
+    if (!reservation) throw new Error('Reservation not found');
+    if (reservation.status !== 'confirmed' && reservation.status !== 'pending') {
+        throw new Error('Reservation cannot be checked in');
     }
+    reservation.status = 'checked_in';
+    reservation.checkedInAt = new Date();
+    return await this.reservationRepository.update(reservation);
+}
 
    // Déjà dans le fichier, ajouter après la mise à jour du statut
      async checkOut(reservationId) {
-        const reservation = await this.reservationRepository.findById(reservationId);
-        if (!reservation) throw new Error('Reservation not found');
-        reservation.checkOut();
-        const updated = await this.reservationRepository.update(reservation);
-
-        // Auto générer facture
-        const invoiceRepo = new InvoiceRepository();
-        const invoiceUseCases = new InvoiceUseCases(invoiceRepo, this.reservationRepository);
-        await invoiceUseCases.generateInvoiceForReservation(reservationId);
-
-        return updated;
-    }
+    const reservation = await this.reservationRepository.findById(reservationId);
+    if (!reservation) throw new Error('Reservation not found');
+    reservation.checkOut();
+    const updated = await this.reservationRepository.update(reservation);
+    
+    // Auto générer facture
+    const InvoiceRepository = require('../../infrastructure/repositories/InvoiceRepository');
+    const InvoiceUseCases = require('./invoiceUseCases');
+    const invoiceRepo = new InvoiceRepository();
+    const invoiceUseCases = new InvoiceUseCases(invoiceRepo, this.reservationRepository);
+    await invoiceUseCases.generateInvoiceForReservation(reservationId);
+    
+    return updated;
+}
 
 
    async cancelReservation(reservationId) {
@@ -108,46 +114,57 @@ class ReservationUseCases {
         return await this.reservationRepository.findAll();
     }
 
-    async updateReservation(reservationId, updateData) {
-        const reservation = await this.reservationRepository.findById(reservationId);
-        if (!reservation) throw new Error('Reservation not found');
-        if (reservation.status !== 'pending' && reservation.status !== 'confirmed') {
-            throw new Error('Cannot modify reservation after check-in');
-        }
-
-        if (updateData.roomId) reservation.roomId = updateData.roomId;
-        if (updateData.checkInDate) reservation.checkInDate = new Date(updateData.checkInDate);
-        if (updateData.checkOutDate) reservation.checkOutDate = new Date(updateData.checkOutDate);
-        if (updateData.numberOfGuests) reservation.numberOfGuests = updateData.numberOfGuests;
-        if (updateData.discountPercent !== undefined) reservation.discountPercent = updateData.discountPercent;
-
-        if (!reservation.isValidDates()) throw new Error('Check-in must be before check-out');
-
-        // Recalculer prix si dates ou chambre changent
-        if (updateData.roomId || updateData.checkInDate || updateData.checkOutDate) {
-            const room = await this.roomRepository.findById(reservation.roomId);
-            const nights = reservation.getNumberOfNights();
-            let total = 0;
-            let currentDate = new Date(reservation.checkInDate);
-            for (let i = 0; i < nights; i++) {
-                const nightDate = new Date(currentDate);
-                nightDate.setDate(currentDate.getDate() + i);
-                const nightPrice = await this.seasonalPriceRepo.getPriceForDate(room.type, nightDate);
-                total += nightPrice;
-            }
-            reservation.totalPrice = total;
-            if (reservation.discountPercent) {
-                reservation.totalPrice = reservation.totalPrice * (1 - reservation.discountPercent / 100);
-            }
-        }
-
-        // Vérifier conflits
-        const conflicts = await this.reservationRepository.findConflicting(reservation.roomId, reservation.checkInDate, reservation.checkOutDate);
-        const conflicting = conflicts.filter(r => r.id !== reservation.id);
-        if (conflicting.length > 0) throw new Error('Room already booked for these dates');
-
-        return await this.reservationRepository.update(reservation);
+   async updateReservation(reservationId, updateData) {
+    const reservation = await this.reservationRepository.findById(reservationId);
+    if (!reservation) throw new Error('Reservation not found');
+    if (reservation.status !== 'pending' && reservation.status !== 'confirmed') {
+        throw new Error('Cannot modify reservation after check-in');
     }
+
+    let newRoomId = updateData.roomId || reservation.roomId;
+    let newNumberOfGuests = updateData.numberOfGuests || reservation.numberOfGuests;
+
+    // Récupérer la chambre (si la chambre change, on prend la nouvelle)
+    const room = await this.roomRepository.findById(newRoomId);
+    if (!room) throw new Error('Room not found');
+    if (!room.canAccommodate(newNumberOfGuests)) {
+        throw new Error(`Room can only accommodate ${room.capacity} guests`);
+    }
+
+    // Appliquer les modifications
+    if (updateData.roomId) reservation.roomId = updateData.roomId;
+    if (updateData.checkInDate) reservation.checkInDate = new Date(updateData.checkInDate);
+    if (updateData.checkOutDate) reservation.checkOutDate = new Date(updateData.checkOutDate);
+    if (updateData.numberOfGuests) reservation.numberOfGuests = updateData.numberOfGuests;
+    if (updateData.discountPercent !== undefined) reservation.discountPercent = updateData.discountPercent;
+
+    if (!reservation.isValidDates()) throw new Error('Check-in must be before check-out');
+
+    // Recalculer prix si dates ou chambre changent
+    if (updateData.roomId || updateData.checkInDate || updateData.checkOutDate) {
+        const roomDetails = await this.roomRepository.findById(reservation.roomId);
+        const nights = reservation.getNumberOfNights();
+        let total = 0;
+        let currentDate = new Date(reservation.checkInDate);
+        for (let i = 0; i < nights; i++) {
+            const nightDate = new Date(currentDate);
+            nightDate.setDate(currentDate.getDate() + i);
+            const nightPrice = await this.seasonalPriceRepo.getPriceForDate(roomDetails.type, nightDate);
+            total += nightPrice;
+        }
+        reservation.totalPrice = total;
+        if (reservation.discountPercent) {
+            reservation.totalPrice = reservation.totalPrice * (1 - reservation.discountPercent / 100);
+        }
+    }
+
+    // Vérifier conflits
+    const conflicts = await this.reservationRepository.findConflicting(reservation.roomId, reservation.checkInDate, reservation.checkOutDate);
+    const conflicting = conflicts.filter(r => r.id !== reservation.id);
+    if (conflicting.length > 0) throw new Error('Room already booked for these dates');
+
+    return await this.reservationRepository.update(reservation);
+}
 }
 
 module.exports = ReservationUseCases;

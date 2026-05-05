@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import API from '../services/api';
 import { useAuth } from '../context/AuthContext';
+import './Reservations.css';
 
 const Reservations = () => {
     const [reservations, setReservations] = useState([]);
@@ -14,18 +15,33 @@ const Reservations = () => {
         roomId: '',
         checkInDate: '',
         checkOutDate: '',
-        numberOfGuests: 1
+        numberOfGuests: 1,
+        discountPercent: 0
     });
-    
-    // Edit modal state
     const [editingReservation, setEditingReservation] = useState(null);
     const [showEditModal, setShowEditModal] = useState(false);
+    const [editError, setEditError] = useState(''); // erreur spécifique à la modale
     const [editForm, setEditForm] = useState({
         roomId: '',
         checkInDate: '',
         checkOutDate: '',
-        numberOfGuests: 1
+        numberOfGuests: 1,
+        discountPercent: 0
     });
+
+    useEffect(() => {
+        if (error) {
+            const timer = setTimeout(() => setError(''), 5000);
+            return () => clearTimeout(timer);
+        }
+    }, [error]);
+
+    useEffect(() => {
+        if (editError) {
+            const timer = setTimeout(() => setEditError(''), 5000);
+            return () => clearTimeout(timer);
+        }
+    }, [editError]);
 
     const { user } = useAuth();
 
@@ -40,8 +56,7 @@ const Reservations = () => {
             const res = await API.get('/reservations');
             setReservations(res.data);
         } catch (err) {
-            setError('Failed to fetch reservations');
-            console.error(err);
+            setError('Erreur chargement');
         } finally {
             setLoading(false);
         }
@@ -52,7 +67,7 @@ const Reservations = () => {
             const res = await API.get('/clients');
             setClients(res.data.filter(c => c.isActive));
         } catch (err) {
-            console.error('Failed to fetch clients', err);
+            console.error(err);
         }
     };
 
@@ -61,25 +76,15 @@ const Reservations = () => {
             const res = await API.get('/rooms');
             setRooms(res.data.filter(r => r.isActive));
         } catch (err) {
-            console.error('Failed to fetch rooms', err);
+            console.error(err);
         }
     };
 
-    const handleInputChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
-    };
-
+    const handleInputChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
     const resetForm = () => {
-        setFormData({
-            clientId: '',
-            roomId: '',
-            checkInDate: '',
-            checkOutDate: '',
-            numberOfGuests: 1
-        });
+        setFormData({ clientId: '', roomId: '', checkInDate: '', checkOutDate: '', numberOfGuests: 1, discountPercent: 0 });
         setShowForm(false);
     };
-
     const handleCreateReservation = async (e) => {
         e.preventDefault();
         try {
@@ -87,216 +92,196 @@ const Reservations = () => {
             resetForm();
             fetchReservations();
         } catch (err) {
-            setError(err.response?.data?.error || 'Creation failed');
+            setError(err.response?.data?.error);
         }
     };
-
-    // Edit handlers
-    const handleEditClick = (reservation) => {
-        // Only allow edit if pending or confirmed
-        if (reservation.status !== 'pending' && reservation.status !== 'confirmed') {
-            setError('Cannot edit reservation after check-in');
+    const handleEditClick = (res) => {
+        if (res.status !== 'pending' && res.status !== 'confirmed') {
+            setError('Impossible de modifier après check-in');
             return;
         }
-        setEditingReservation(reservation);
+        setEditingReservation(res);
         setEditForm({
-            roomId: reservation.roomId,
-            checkInDate: reservation.checkInDate.split('T')[0],
-            checkOutDate: reservation.checkOutDate.split('T')[0],
-            numberOfGuests: reservation.numberOfGuests
+            roomId: res.roomId,
+            checkInDate: res.checkInDate.split('T')[0],
+            checkOutDate: res.checkOutDate.split('T')[0],
+            numberOfGuests: res.numberOfGuests,
+            discountPercent: res.discountPercent || 0
         });
+        setEditError(''); // nettoyer l'erreur avant ouverture
         setShowEditModal(true);
     };
-
     const handleEditSubmit = async (e) => {
         e.preventDefault();
         try {
             await API.put(`/reservations/${editingReservation.id}`, editForm);
             setShowEditModal(false);
+            setEditError('');
             fetchReservations();
         } catch (err) {
-            setError(err.response?.data?.error || 'Update failed');
+            setEditError(err.response?.data?.error); // erreur affichée dans la modale
         }
     };
-
-    const handleEditChange = (e) => {
-        setEditForm({ ...editForm, [e.target.name]: e.target.value });
-    };
-
+    const handleEditChange = (e) => setEditForm({ ...editForm, [e.target.name]: e.target.value });
     const handleConfirm = async (id) => {
         try {
             await API.put(`/reservations/${id}/confirm`);
             fetchReservations();
         } catch (err) {
-            setError(err.response?.data?.error || 'Confirmation failed');
+            setError(err.response?.data?.error);
         }
     };
-
     const handleCheckIn = async (id) => {
         try {
             await API.put(`/reservations/${id}/checkin`);
             fetchReservations();
         } catch (err) {
-            setError(err.response?.data?.error || 'Check-in failed');
+            setError(err.response?.data?.error);
         }
     };
-
     const handleCheckOut = async (id) => {
         try {
             await API.put(`/reservations/${id}/checkout`);
             fetchReservations();
         } catch (err) {
-            setError(err.response?.data?.error || 'Check-out failed');
+            setError(err.response?.data?.error);
         }
     };
-
     const handleCancel = async (id) => {
-        if (!window.confirm('Cancel this reservation? This action cannot be undone.')) return;
+        if (!window.confirm('Annuler définitivement ?')) return;
         try {
             await API.delete(`/reservations/${id}`);
             fetchReservations();
         } catch (err) {
-            setError(err.response?.data?.error || 'Cancellation failed');
+            setError(err.response?.data?.error);
         }
     };
+    const getStatusColor = (status) => ({ pending: '#f39c12', confirmed: '#3498db', checked_in: '#2ecc71', checked_out: '#95a5a6', cancelled: '#e74c3c' }[status] || '#7f8c8d');
 
-    const generateInvoice = async (id) => {
-        try {
-            const res = await API.post(`/reservations/${id}/invoice`);
-            alert(`Invoice generated: ${res.data.invoiceNumber}`);
-            fetchReservations();
-        } catch (err) {
-            setError(err.response?.data?.error || 'Invoice generation failed');
-        }
-    };
-
-    const getStatusColor = (status) => {
-        switch(status) {
-            case 'pending': return '#f39c12';
-            case 'confirmed': return '#3498db';
-            case 'checked_in': return '#2ecc71';
-            case 'checked_out': return '#95a5a6';
-            case 'cancelled': return '#e74c3c';
-            default: return '#7f8c8d';
-        }
-    };
-
-    if (loading) return <div>Loading reservations...</div>;
+    if (loading) return <div className="loading-state"><div className="spinner"></div><span>Chargement...</span></div>;
 
     return (
-        <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                <h1>Reservations</h1>
-                <button onClick={() => setShowForm(true)} style={{ padding: '8px 16px', backgroundColor: '#2c3e50', color: 'white', border: 'none', borderRadius: '4px' }}>
-                    New Reservation
-                </button>
+        <div className="reservations-app">
+            <div className="header">
+                <h1>Réservations</h1>
+                <button className="btn-add" onClick={() => setShowForm(true)}>➕ Nouvelle réservation</button>
             </div>
 
-            {error && <div style={{ color: 'red', marginBottom: '10px' }}>{error}</div>}
+            {error && <div className="error-message">{error}</div>}
 
             {showForm && (
-                <div style={{ border: '1px solid #ccc', padding: '20px', marginBottom: '20px', borderRadius: '8px' }}>
-                    <h2>Create Reservation</h2>
+                <div className="form-card">
+                    <h2>📝 Créer une réservation</h2>
                     <form onSubmit={handleCreateReservation}>
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-                            <div><label>Client *</label><br />
-                                <select name="clientId" value={formData.clientId} onChange={handleInputChange} required style={{ width: '100%', padding: '6px' }}>
-                                    <option value="">Select client</option>
-                                    {clients.map(c => <option key={c.id} value={c.id}>{c.firstName} {c.lastName} - {c.idCardNumber}</option>)}
+                        <div className="form-grid">
+                            <div>
+                                <label>👤 Client *</label>
+                                <select name="clientId" value={formData.clientId} onChange={handleInputChange} required>
+                                    <option value="">Sélectionner un client</option>
+                                    {clients.map(c => (
+                                        <option key={c.id} value={c.id}>{c.firstName} {c.lastName} - {c.idCardNumber}</option>
+                                    ))}
                                 </select>
                             </div>
-                            <div><label>Room *</label><br />
-                                <select name="roomId" value={formData.roomId} onChange={handleInputChange} required style={{ width: '100%', padding: '6px' }}>
-                                    <option value="">Select room</option>
-                                    {rooms.map(r => <option key={r.id} value={r.id}>{r.roomNumber} - {r.type} (cap. {r.capacity})</option>)}
+                            <div>
+                                <label>🛏️ Chambre *</label>
+                                <select name="roomId" value={formData.roomId} onChange={handleInputChange} required>
+                                    <option value="">Sélectionner une chambre</option>
+                                    {rooms.map(r => (
+                                        <option key={r.id} value={r.id}>{r.roomNumber} - {r.type} (capacité {r.capacity})</option>
+                                    ))}
                                 </select>
                             </div>
-                            <div><label>Check-in Date *</label><br /><input type="date" name="checkInDate" value={formData.checkInDate} onChange={handleInputChange} required style={{ width: '100%', padding: '6px' }} /></div>
-                            <div><label>Check-out Date *</label><br /><input type="date" name="checkOutDate" value={formData.checkOutDate} onChange={handleInputChange} required style={{ width: '100%', padding: '6px' }} /></div>
-                            <div><label>Number of Guests *</label><br /><input type="number" name="numberOfGuests" min="1" value={formData.numberOfGuests} onChange={handleInputChange} required style={{ width: '100%', padding: '6px' }} /></div>
+                            <div>
+                                <label>📅 Date d'arrivée *</label>
+                                <input type="date" name="checkInDate" value={formData.checkInDate} onChange={handleInputChange} required />
+                            </div>
+                            <div>
+                                <label>📅 Date de départ *</label>
+                                <input type="date" name="checkOutDate" value={formData.checkOutDate} onChange={handleInputChange} required />
+                            </div>
+                            <div>
+                                <label>👥 Nombre de personnes *</label>
+                                <input type="number" name="numberOfGuests" min="1" value={formData.numberOfGuests} onChange={handleInputChange} required />
+                                <small>Capacité max indiquée sur la chambre</small>
+                            </div>
+                            <div>
+                                <label>🏷️ Remise (%) (optionnel)</label>
+                                <input type="number" name="discountPercent" min="0" max="100" step="1" value={formData.discountPercent} onChange={handleInputChange} placeholder="Ex: 10 pour 10%" />
+                                <small>Laissez 0 si aucune remise</small>
+                            </div>
                         </div>
-                        <div style={{ marginTop: '15px' }}>
-                            <button type="submit" style={{ marginRight: '10px', padding: '6px 12px', backgroundColor: '#27ae60', color: 'white', border: 'none', borderRadius: '4px' }}>Create</button>
-                            <button type="button" onClick={resetForm} style={{ padding: '6px 12px', backgroundColor: '#7f8c8d', color: 'white', border: 'none', borderRadius: '4px' }}>Cancel</button>
+                        <div style={{ marginTop: '1.5rem' }}>
+                            <button type="submit" className="btn-submit">Créer</button>
+                            <button type="button" className="btn-cancel" onClick={resetForm}>Annuler</button>
                         </div>
                     </form>
                 </div>
             )}
 
-            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                <thead>
-                    <tr style={{ backgroundColor: '#f2f2f2' }}>
-                        <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left' }}>ID</th>
-                        <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left' }}>Client Name</th>
-                        <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left' }}>Room Number</th>
-                        <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left' }}>Check-in</th>
-                        <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left' }}>Check-out</th>
-                        <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left' }}>Guests</th>
-                        <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left' }}>Status</th>
-                        <th style={{ border: '1px solid #ddd', padding: '8px', textAlign: 'left' }}>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {reservations.map(res => (
-                        <tr key={res.id}>
-                            <td style={{ border: '1px solid #ddd', padding: '8px' }}>{res.id}</td>
-                            <td style={{ border: '1px solid #ddd', padding: '8px' }}>{res.clientName || `Client #${res.clientId}`}</td>
-                            <td style={{ border: '1px solid #ddd', padding: '8px' }}>{res.roomNumber || `Room #${res.roomId}`}</td>
-                            <td style={{ border: '1px solid #ddd', padding: '8px' }}>{new Date(res.checkInDate).toLocaleDateString()}</td>
-                            <td style={{ border: '1px solid #ddd', padding: '8px' }}>{new Date(res.checkOutDate).toLocaleDateString()}</td>
-                            <td style={{ border: '1px solid #ddd', padding: '8px' }}>{res.numberOfGuests}</td>
-                            <td style={{ border: '1px solid #ddd', padding: '8px', color: getStatusColor(res.status), fontWeight: 'bold' }}>{res.status}</td>
-                            <td style={{ border: '1px solid #ddd', padding: '8px' }}>
-                                {/* Edit button - only for pending/confirmed */}
-                                {(res.status === 'pending' || res.status === 'confirmed') && (
-                                    <button onClick={() => handleEditClick(res)} style={{ marginRight: '5px', padding: '4px 8px', backgroundColor: '#f39c12', color: 'white', border: 'none', borderRadius: '3px' }}>Edit</button>
-                                )}
-                                {res.status === 'pending' && (
-                                    <button onClick={() => handleConfirm(res.id)} style={{ marginRight: '5px', padding: '4px 8px', backgroundColor: '#3498db', color: 'white', border: 'none', borderRadius: '3px' }}>Confirm</button>
-                                )}
-                                {res.status === 'confirmed' && (
-                                    <button onClick={() => handleCheckIn(res.id)} style={{ marginRight: '5px', padding: '4px 8px', backgroundColor: '#2ecc71', color: 'white', border: 'none', borderRadius: '3px' }}>Check-in</button>
-                                )}
-                                {res.status === 'checked_in' && (
-                                    <button onClick={() => handleCheckOut(res.id)} style={{ marginRight: '5px', padding: '4px 8px', backgroundColor: '#e67e22', color: 'white', border: 'none', borderRadius: '3px' }}>Check-out</button>
-                                )}
-                                {(res.status === 'pending' || res.status === 'confirmed') && (
-                                    <button onClick={() => handleCancel(res.id)} style={{ padding: '4px 8px', backgroundColor: '#e74c3c', color: 'white', border: 'none', borderRadius: '3px' }}>Cancel</button>
-                                )}
-                            </td>
+            <div className="table-card">
+                <table className="res-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th><th>Client</th><th>Chambre</th><th>Arrivée</th><th>Départ</th><th>Personnes</th><th>Statut</th><th>Actions</th>
                         </tr>
-                    ))}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        {reservations.map(res => (
+                            <tr key={res.id}>
+                                <td>{res.id}</td>
+                                <td>{res.clientName || `#${res.clientId}`}</td>
+                                <td>{res.roomNumber || `#${res.roomId}`}</td>
+                                <td>{new Date(res.checkInDate).toLocaleDateString()}</td>
+                                <td>{new Date(res.checkOutDate).toLocaleDateString()}</td>
+                                <td>{res.numberOfGuests}</td>
+                                <td style={{ color: getStatusColor(res.status), fontWeight: 'bold' }}>{res.status}</td>
+                                <td>
+                                    {(res.status === 'pending' || res.status === 'confirmed') && <button className="btn-action" onClick={() => handleEditClick(res)}>✏️</button>}
+                                    {res.status === 'pending' && <button className="btn-action" onClick={() => handleConfirm(res.id)}>✅</button>}
+                                    {res.status === 'confirmed' && <button className="btn-action" onClick={() => handleCheckIn(res.id)}>▶️</button>}
+                                    {res.status === 'checked_in' && <button className="btn-action" onClick={() => handleCheckOut(res.id)}>⏹️</button>}
+                                    {(res.status === 'pending' || res.status === 'confirmed') && <button className="btn-action" onClick={() => handleCancel(res.id)}>❌</button>}
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
 
-            {/* Edit Modal */}
             {showEditModal && editingReservation && (
-                <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
-                    <div style={{ backgroundColor: 'white', padding: '20px', borderRadius: '8px', width: '400px' }}>
-                        <h2>Edit Reservation #{editingReservation.id}</h2>
+                <div className="modal-overlay">
+                    <div className="modal-content">
+                        <h2>✏️ Modifier réservation #{editingReservation.id}</h2>
+                        {editError && <div className="error-message" style={{ marginBottom: '1rem' }}>{editError}</div>}
                         <form onSubmit={handleEditSubmit}>
-                            <div style={{ marginBottom: '10px' }}>
-                                <label>Room</label><br />
-                                <select name="roomId" value={editForm.roomId} onChange={handleEditChange} required style={{ width: '100%', padding: '6px' }}>
-                                    <option value="">Select room</option>
-                                    {rooms.map(r => <option key={r.id} value={r.id}>{r.roomNumber} - {r.type} (cap. {r.capacity})</option>)}
-                                </select>
+                            <div className="edit-form-grid">
+                                <div>
+                                    <label>🛏️ Chambre</label>
+                                    <select name="roomId" value={editForm.roomId} onChange={handleEditChange} required>
+                                        {rooms.map(r => <option key={r.id} value={r.id}>{r.roomNumber} - {r.type}</option>)}
+                                    </select>
+                                </div>
+                                <div>
+                                    <label>📅 Date d'arrivée</label>
+                                    <input type="date" name="checkInDate" value={editForm.checkInDate} onChange={handleEditChange} required />
+                                </div>
+                                <div>
+                                    <label>📅 Date de départ</label>
+                                    <input type="date" name="checkOutDate" value={editForm.checkOutDate} onChange={handleEditChange} required />
+                                </div>
+                                <div>
+                                    <label>👥 Nombre de personnes</label>
+                                    <input type="number" name="numberOfGuests" min="1" value={editForm.numberOfGuests} onChange={handleEditChange} required />
+                                </div>
+                                <div>
+                                    <label>🏷️ Remise (%)</label>
+                                    <input type="number" name="discountPercent" min="0" max="100" step="1" value={editForm.discountPercent} onChange={handleEditChange} />
+                                </div>
                             </div>
-                            <div style={{ marginBottom: '10px' }}>
-                                <label>Check-in Date</label><br />
-                                <input type="date" name="checkInDate" value={editForm.checkInDate} onChange={handleEditChange} required style={{ width: '100%', padding: '6px' }} />
-                            </div>
-                            <div style={{ marginBottom: '10px' }}>
-                                <label>Check-out Date</label><br />
-                                <input type="date" name="checkOutDate" value={editForm.checkOutDate} onChange={handleEditChange} required style={{ width: '100%', padding: '6px' }} />
-                            </div>
-                            <div style={{ marginBottom: '10px' }}>
-                                <label>Number of Guests</label><br />
-                                <input type="number" name="numberOfGuests" min="1" value={editForm.numberOfGuests} onChange={handleEditChange} required style={{ width: '100%', padding: '6px' }} />
-                            </div>
-                            <div style={{ marginTop: '15px' }}>
-                                <button type="submit" style={{ marginRight: '10px', padding: '6px 12px', backgroundColor: '#27ae60', color: 'white', border: 'none', borderRadius: '4px' }}>Save</button>
-                                <button type="button" onClick={() => setShowEditModal(false)} style={{ padding: '6px 12px', backgroundColor: '#7f8c8d', color: 'white', border: 'none', borderRadius: '4px' }}>Cancel</button>
+                            <div style={{ marginTop: '1.5rem' }}>
+                                <button type="submit" className="btn-submit">Enregistrer</button>
+                                <button type="button" className="btn-cancel" onClick={() => setShowEditModal(false)}>Annuler</button>
                             </div>
                         </form>
                     </div>

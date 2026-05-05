@@ -1,0 +1,510 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap');
+
+/* ── Variables ────────────────────────────────────────────────────── */
+:root {
+    --ink:      #0d0b14;
+    --deep:     #12101c;
+    --surface:  #1a1628;
+    --card:     #211e30;
+    --border:   rgba(255,255,255,0.07);
+    --gold:     #c9a84c;
+    --gold-lt:  #e8c97a;
+    --amber:    #ff6f15;
+    --muted:    #7a7494;
+    --text:     #e8e4f0;
+    --serif:    'Cormorant Garamond', Georgia, serif;
+    --sans:     'DM Sans', system-ui, sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ── Layout racine ────────────────────────────────────────────────── */
+.login-root {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    font-family: var(--sans);
+    background: var(--ink);
+    overflow: hidden;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   COLONNE GAUCHE — panneau décoratif
+══════════════════════════════════════════════════════════════════ */
+.login-visual {
+    position: relative;
+    background: var(--deep);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 3rem;
+    overflow: hidden;
+}
+
+/* Fond architectural — grille perspective */
+.login-visual::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+        repeating-linear-gradient(
+            0deg,
+            transparent,
+            transparent 59px,
+            rgba(201,168,76,0.06) 60px
+        ),
+        repeating-linear-gradient(
+            90deg,
+            transparent,
+            transparent 59px,
+            rgba(201,168,76,0.06) 60px
+        );
+    mask-image: radial-gradient(ellipse 80% 80% at 50% 40%, black 30%, transparent 100%);
+}
+
+/* Halo doré central */
+.login-visual::after {
+    content: '';
+    position: absolute;
+    top: 20%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 340px;
+    height: 340px;
+    background: radial-gradient(circle, rgba(201,168,76,0.18) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+/* Particules flottantes */
+.particles {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+.particle {
+    position: absolute;
+    border-radius: 50%;
+    background: var(--gold);
+    animation: float linear infinite;
+    opacity: 0;
+}
+
+@keyframes float {
+    0%   { transform: translateY(100vh) scale(0); opacity: 0; }
+    10%  { opacity: 0.6; }
+    90%  { opacity: 0.3; }
+    100% { transform: translateY(-20vh) scale(1); opacity: 0; }
+}
+
+/* Icône hôtel centrale */
+.hotel-icon-wrap {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -60%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.hotel-emblem {
+    width: 90px;
+    height: 90px;
+    border: 1.5px solid var(--gold);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    animation: pulse-ring 3s ease-in-out infinite;
+}
+
+.hotel-emblem::before {
+    content: '';
+    position: absolute;
+    inset: -8px;
+    border-radius: 50%;
+    border: 1px solid rgba(201,168,76,0.2);
+    animation: pulse-ring 3s ease-in-out infinite 0.5s;
+}
+
+.hotel-emblem::after {
+    content: '';
+    position: absolute;
+    inset: -16px;
+    border-radius: 50%;
+    border: 1px solid rgba(201,168,76,0.1);
+    animation: pulse-ring 3s ease-in-out infinite 1s;
+}
+
+@keyframes pulse-ring {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50%       { transform: scale(1.04); opacity: 0.7; }
+}
+
+.hotel-emblem svg {
+    width: 40px;
+    height: 40px;
+    fill: none;
+    stroke: var(--gold);
+    stroke-width: 1.2;
+    stroke-linecap: round;
+}
+
+.hotel-name-visual {
+    font-family: var(--serif);
+    font-size: 1.5rem;
+    font-weight: 300;
+    letter-spacing: 0.25em;
+    color: var(--gold-lt);
+    text-transform: uppercase;
+}
+
+/* Citation du bas */
+.visual-quote {
+    position: relative;
+    z-index: 2;
+}
+
+.visual-quote blockquote {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 1.45rem;
+    font-weight: 300;
+    color: rgba(232,228,240,0.75);
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+.visual-quote blockquote span {
+    color: var(--gold-lt);
+}
+
+.visual-quote cite {
+    font-size: 0.72rem;
+    font-style: normal;
+    font-family: var(--sans);
+    letter-spacing: 0.15em;
+    color: var(--muted);
+    text-transform: uppercase;
+}
+
+/* Barre dorée décorative */
+.gold-bar {
+    width: 36px;
+    height: 1.5px;
+    background: linear-gradient(90deg, var(--gold), transparent);
+    margin-bottom: 1rem;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   COLONNE DROITE — formulaire
+══════════════════════════════════════════════════════════════════ */
+.login-panel {
+    background: var(--surface);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 3.5rem;
+    position: relative;
+}
+
+/* Lueur ambre subtile en haut à droite */
+.login-panel::before {
+    content: '';
+    position: absolute;
+    top: -80px;
+    right: -80px;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(255,111,21,0.07) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+.login-form-wrap {
+    width: 100%;
+    max-width: 380px;
+    animation: slideIn 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes slideIn {
+    from { opacity: 0; transform: translateX(24px); }
+    to   { opacity: 1; transform: translateX(0); }
+}
+
+/* Badge de bienvenue */
+.welcome-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(201,168,76,0.1);
+    border: 1px solid rgba(201,168,76,0.25);
+    border-radius: 40px;
+    padding: 0.35rem 0.9rem;
+    margin-bottom: 1.75rem;
+    animation: slideIn 0.6s 0.1s both;
+}
+
+.welcome-badge span {
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-weight: 500;
+}
+
+.welcome-badge::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--gold);
+    animation: blink 2s ease-in-out infinite;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.3; }
+}
+
+/* Titre */
+.login-title {
+    font-family: var(--serif);
+    font-size: 2.6rem;
+    font-weight: 300;
+    color: var(--text);
+    line-height: 1.15;
+    margin-bottom: 0.5rem;
+    animation: slideIn 0.6s 0.15s both;
+}
+
+.login-title em {
+    font-style: italic;
+    color: var(--gold-lt);
+}
+
+.login-subtitle {
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-bottom: 1.25rem;
+    line-height: 1.6;
+    animation: slideIn 0.6s 0.2s both;
+}
+
+/* Séparateur */
+.form-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+    margin-bottom: 1.25rem;
+    animation: slideIn 0.6s 0.22s both;
+}
+
+/* Champs */
+.field {
+    margin-bottom: 1.25rem;
+    animation: slideIn 0.6s both;
+}
+
+.field:nth-child(1) { animation-delay: 0.25s; }
+.field:nth-child(2) { animation-delay: 0.3s; }
+
+.field-label {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.5rem;
+}
+
+.field-label svg {
+    width: 13px;
+    height: 13px;
+    stroke: var(--gold);
+    stroke-width: 1.8;
+    fill: none;
+    stroke-linecap: round;
+    flex-shrink: 0;
+}
+
+.field-input-wrap {
+    position: relative;
+}
+
+.field-input {
+    width: 100%;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 0.85rem 1rem;
+    font-size: 0.9rem;
+    font-family: var(--sans);
+    color: var(--text);
+    transition: border-color 0.25s, box-shadow 0.25s, background 0.25s;
+    outline: none;
+}
+
+.field-input::placeholder { color: rgba(122,116,148,0.5); }
+
+.field-input:focus {
+    border-color: rgba(201,168,76,0.5);
+    box-shadow: 0 0 0 3px rgba(201,168,76,0.08), 0 0 20px rgba(201,168,76,0.06);
+    background: rgba(33,30,48,0.9);
+}
+
+/* Ligne de focus animée sous le champ */
+.field-line {
+    height: 1px;
+    margin-top: 2px;
+    background: linear-gradient(90deg, var(--gold), var(--amber));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s cubic-bezier(0.22,1,0.36,1);
+    border-radius: 1px;
+}
+
+.field-input:focus ~ .field-line { transform: scaleX(1); }
+
+/* Erreur */
+.login-error {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: rgba(244, 63, 94, 0.08);
+    border: 1px solid rgba(244, 63, 94, 0.25);
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    color: #fca5a5;
+    font-size: 0.82rem;
+    margin-bottom: 1.25rem;
+    animation: shake 0.4s ease;
+}
+
+.login-error svg {
+    width: 14px;
+    height: 14px;
+    stroke: #f87171;
+    flex-shrink: 0;
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%       { transform: translateX(-6px); }
+    60%       { transform: translateX(6px); }
+}
+
+/* Bouton */
+.login-btn {
+    width: 100%;
+    margin-top: 0.5rem;
+    padding: 1rem;
+    border: none;
+    border-radius: 12px;
+    font-family: var(--sans);
+    font-size: 0.88rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, var(--gold) 0%, #b8892e 100%);
+    color: var(--ink);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 4px 24px rgba(201,168,76,0.25);
+    animation: slideIn 0.6s 0.35s both;
+}
+
+.login-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 60%);
+    pointer-events: none;
+}
+
+/* Shimmer au hover */
+.login-btn::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.login-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(201,168,76,0.35);
+}
+
+.login-btn:hover::after { left: 140%; }
+
+.login-btn:active:not(:disabled) { transform: translateY(1px); }
+
+.login-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Loader dans le bouton */
+.btn-loader {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-loader::before {
+    content: '';
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgba(13,11,20,0.3);
+    border-top-color: var(--ink);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    display: inline-block;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Pied */
+.login-footer {
+    text-align: center;
+    margin-top: 2rem;
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    color: rgba(122,116,148,0.6);
+    text-transform: uppercase;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+    animation: slideIn 0.6s 0.4s both;
+}
+
+.login-footer a {
+    color: var(--gold);
+    text-decoration: none;
+    margin-left: 0.3rem;
+}
+
+/* ── Responsive ───────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+    .login-root {
+        grid-template-columns: 1fr;
+    }
+    .login-visual {
+        display: none;
+    }
+    .login-panel {
+        padding: 2rem 1.5rem;
+    }
+}
