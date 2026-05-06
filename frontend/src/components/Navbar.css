@@ -1,97 +1,66 @@
+/* ============================================================
+   LUXURY HOTEL — Navbar.css
+   ============================================================ */
+
 .navbar {
-    background: linear-gradient(120deg, #2a1a5e, #3b2b6e, #2a1a5e);
-    background-size: 200% 200%;
-    animation: gradientShift 5s ease infinite;
-    padding: 0.75rem 2rem;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.8rem;
-    align-items: center;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-    border-bottom-left-radius: 20px;
-    border-bottom-right-radius: 20px;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+  padding: 0.75rem 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+  box-shadow: var(--shadow-md);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  font-family: var(--font-body);
 }
-
-@keyframes gradientShift {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-}
-
 .navbar a {
-    color: white;
-    text-decoration: none;
-    font-weight: bold;
-    padding: 0.5rem 1rem;
-    border-radius: 50px;
-    transition: all 0.3s ease;
-    font-size: 1rem;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(4px);
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  border-radius: 40px;
+  transition: all var(--transition-fast);
 }
-
 .navbar a:hover {
-    background: #ff6f15;
-    color: white;
-    transform: scale(1.05) translateY(-3px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
+  color: var(--color-gold-light);
 }
-
 .user-info {
-    margin-left: auto;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    background: rgba(0, 0, 0, 0.2);
-    padding: 0.3rem 1rem;
-    border-radius: 60px;
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }
-
 .user-email {
-    background: rgba(255, 255, 255, 0.25);
-    padding: 0.4rem 1rem;
-    border-radius: 40px;
-    font-size: 0.85rem;
-    font-weight: 500;
-    color: #ffe0b5;
+  background: rgba(255, 255, 255, 0.1);
+  color:  rgb(201, 168, 76);
+  padding: 0.4rem 1rem;
+  border-radius: 40px;
+  font-size: 0.85rem;
 }
-
 .logout-btn {
-    background: #e63946;
-    border: none;
-    color: white;
-    padding: 0.4rem 1rem;
-    border-radius: 40px;
-    cursor: pointer;
-    transition: 0.2s;
-    font-weight: bold;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
+  background: rgba(201, 168, 76, 0.2);
+  border: 1px solid var(--color-gold);
+  color: var(--color-gold);
+  padding: 0.4rem 1rem;
+  border-radius: 40px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
 }
-
 .logout-btn:hover {
-    background: #c1121f;
-    transform: scale(1.02);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  background: var(--color-gold);
+  color: var(--color-primary-dark);
+  transition: ease-in-out 0.2s;
+  transform: translateY(-2px);
 }
-
 @media (max-width: 768px) {
-    .navbar {
-        flex-direction: column;
-        align-items: stretch;
-        padding: 1rem;
-        border-radius: 0 0 20px 20px;
-    }
-    .user-info {
-        margin-left: 0;
-        justify-content: space-between;
-    }
+  .navbar {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 0.75rem;
+  }
+  .user-info { margin-left: 0; justify-content: space-between; }
 }
-

@@ -20,8 +20,8 @@ const Navbar = () => {
             <Link to="/rooms">🛏️ Chambres</Link>
             <Link to="/invoices">🧾 Factures</Link>
             <div className="user-info">
-                <span className="user-email">👋 {user?.email} ({user?.role})</span>
-                <button className="logout-btn" onClick={handleLogout}>🚪 Déconnexion</button>
+                <span className="user-email">{user?.email} ({user?.role})</span>
+                <button className="logout-btn" onClick={handleLogout}>Déconnexion</button>
             </div>
         </nav>
     );

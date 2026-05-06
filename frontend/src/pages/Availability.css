@@ -1,98 +1,189 @@
+/* ============================================================
+   LUXURY HOTEL DESIGN SYSTEM — Availability.css
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Jost:wght@300;400;500;600&display=swap');
+
 .availability-app {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 2rem;
-    background: linear-gradient(145deg, #fef9f4, #f8fafc);
-    min-height: 100vh;
-    font-family: 'Inter', system-ui;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: var(--space-xl) var(--space-lg);
+  animation: pageIn 0.5s var(--transition-slow) both;
 }
-h1 {
-    font-size: 2.5rem;
-    font-weight: 700;
-    background: linear-gradient(135deg, #2a1a5e, #ff6f15);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    margin-bottom: 2rem;
+
+.availability-app h1 {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 300;
+  color: var(--color-primary);
+  margin-bottom: var(--space-xl);
+  letter-spacing: 0.04em;
 }
+.availability-app h1::before {
+  content: '✦ ';
+  color: var(--color-gold);
+  font-size: 0.6em;
+  vertical-align: middle;
+}
+
+/* Carte formulaire */
 .form-card {
-    background: white;
-    border-radius: 28px;
-    padding: 1.5rem;
-    margin-bottom: 2rem;
-    box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-top: 3px solid var(--color-gold);
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl);
+  margin-bottom: var(--space-xl);
+  box-shadow: var(--shadow-md);
+  animation: cardIn 0.35s ease both;
 }
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
 .grid-form {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem;
-    align-items: end;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-lg);
+  align-items: end;
 }
-label {
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    color: #2a1a5e;
-    margin-bottom: 0.25rem;
-    display: block;
+.form-field {
+  display: flex;
+  flex-direction: column;
 }
-input, select {
-    width: 100%;
-    padding: 0.75rem;
-    border: 1px solid #e2e8f0;
-    border-radius: 20px;
-    transition: 0.2s;
+.form-field label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-primary);
+  margin-bottom: var(--space-xs);
 }
-input:focus, select:focus {
-    border-color: #ff6f15;
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(255,111,21,0.1);
+.form-field input,
+.form-field select {
+  width: 100%;
+  padding: 0.7rem 1rem;
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-family: var(--font-body);
+  transition: all var(--transition-base);
+}
+.form-field input:focus,
+.form-field select:focus {
+  border-color: var(--color-gold);
+  background: var(--color-surface);
+  box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.15);
+  outline: none;
+}
+.button-field {
+  justify-content: flex-end;
 }
 .btn-search {
-    background: linear-gradient(135deg, #2a1a5e, #1e0f4a);
-    color: white;
-    border: none;
-    padding: 0.75rem 1.5rem;
-    border-radius: 40px;
-    cursor: pointer;
-    transition: 0.2s;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-light));
+  color: var(--color-gold-light);
+  padding: 0.7rem 1rem;
+  border: none;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  margin-left: 70px;
+  margin-top: 20px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
 }
 .btn-search:hover {
-    transform: translateY(-2px);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-gold);
+}
+
+/* Résultats */
+.results h2 {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 400;
+  color: var(--color-primary);
+  margin-bottom: var(--space-lg);
+  margin-top: var(--space-xl);
 }
 .room-card {
-    background: white;
-    border-radius: 28px;
-    padding: 1rem 1.5rem;
-    margin-bottom: 1rem;
-    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-md) var(--space-lg);
+  margin-bottom: var(--space-md);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+.room-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 .room-number {
-    font-weight: 700;
-    color: #2a1a5e;
-    font-size: 1.2rem;
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--color-primary);
+  margin-bottom: var(--space-xs);
 }
+.no-result {
+  text-align: center;
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+/* Messages */
 .error-message {
-    background: #fee2e2;
-    border-left: 4px solid #f43f5e;
-    padding: 1rem;
-    border-radius: 20px;
-    margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: 0.75rem 1.2rem;
+  background: var(--color-danger-light);
+  border-left: 3px solid var(--color-danger);
+  border-radius: var(--radius-md);
+  color: var(--color-danger);
+  margin-bottom: var(--space-lg);
+}
+.error-message::before {
+  content: '⚠';
+  font-size: 1rem;
 }
 .loading-state {
-    display: flex;
-    gap: 1rem;
-    align-items: center;
-    padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-2xl);
+  color: var(--color-text-muted);
 }
 .spinner {
-    width: 30px;
-    height: 30px;
-    border: 3px solid #e2e8f0;
-    border-top-color: #ff6f15;
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
+  width: 36px;
+  height: 36px;
+  border: 2px solid var(--color-border);
+  border-top-color: var(--color-gold);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
 }
-@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Responsive */
 @media (max-width: 768px) {
-    .availability-app { padding: 1rem; }
+  .availability-app {
+    padding: var(--space-lg) var(--space-md);
+  }
+  .grid-form {
+    grid-template-columns: 1fr;
+    gap: var(--space-md);
+  }
+  .button-field {
+    margin-top: var(--space-sm);
+  }
+  .results h2 {
+    font-size: 1.3rem;
+  }
 }
