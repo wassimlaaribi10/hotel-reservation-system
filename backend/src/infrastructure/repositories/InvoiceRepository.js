@@ -33,21 +33,38 @@ async create(invoice, detailsJson = null) {
         const result = await pool.query(query, [reservationId]);
         if (result.rows.length === 0) return null;
         const row = result.rows[0];
-        return new Invoice(row.id, row.reservation_id, row.invoice_number, row.issue_date,
-                          row.total_amount, row.discount, row.final_amount, row.pdf_path);
+        // Créez l'objet et ajoutez explicitement `details`
+        const invoice = new Invoice(row.id, row.reservation_id, row.invoice_number, row.issue_date,
+                                    row.total_amount, row.discount, row.final_amount, row.pdf_path);
+        invoice.details = row.details;   // propriété ajoutée
+        return invoice;
     }
 
     async findByClientId(clientId) {
-        const query = `
-            SELECT i.* FROM invoices i
-            JOIN reservations r ON i.reservation_id = r.id
-            WHERE r.client_id = $1
-            ORDER BY i.issue_date DESC
-        `;
-        const result = await pool.query(query, [clientId]);
-        return result.rows.map(row => new Invoice(row.id, row.reservation_id, row.invoice_number,
-                                row.issue_date, row.total_amount, row.discount, row.final_amount, row.pdf_path));
-    }
+    const query = `
+        SELECT i.*, 
+               r.check_in_date, 
+               r.check_out_date,
+               r.number_of_guests
+        FROM invoices i
+        JOIN reservations r ON i.reservation_id = r.id
+        WHERE r.client_id = $1
+        ORDER BY i.issue_date DESC
+    `;
+    const result = await pool.query(query, [clientId]);
+    return result.rows.map(row => {
+        const invoice = new Invoice(
+            row.id, row.reservation_id, row.invoice_number, row.issue_date,
+            row.total_amount, row.discount, row.final_amount, row.pdf_path
+        );
+        // Ajout des informations du séjour
+        invoice.checkInDate = row.check_in_date;
+        invoice.checkOutDate = row.check_out_date;
+        invoice.numberOfGuests = row.number_of_guests;
+        invoice.details = row.details; // déjà présent via SELECT i.*
+        return invoice;
+    });
+}
 
     async update(invoice) {
         const query = `

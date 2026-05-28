@@ -193,15 +193,34 @@
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
-  overflow: hidden;
+  overflow-x: auto;          /* active le scroll horizontal si nécessaire */
   box-shadow: var(--shadow-md);
 }
 
 .room-table {
   width: 100%;
   border-collapse: collapse;
+  table-layout: fixed;       /* empêche l’étalement dû aux longs textes */
 }
 
+/* Largeurs relatives des colonnes (ajuster selon besoin) */
+.room-table th:nth-child(1) { width: 8%; }   /* Numéro */
+.room-table th:nth-child(2) { width: 8%; }   /* Type */
+.room-table th:nth-child(3) { width: 6%; }   /* Étage */
+.room-table th:nth-child(4) { width: 8%; }   /* Capacité */
+.room-table th:nth-child(5) { width: 25%; }  /* Description */
+.room-table th:nth-child(6) { width: 20%; }  /* Équipements */
+.room-table th:nth-child(7) { width: 8%; }   /* Statut */
+.room-table th:nth-child(8) { width: 15%; }  /* Actions */
+
+/* Permettre le retour à la ligne dans la description */
+.room-table td:nth-child(5) {
+  word-wrap: break-word;
+  white-space: normal;
+  line-height: 1.4;
+}
+
+/* En-tête du tableau */
 .room-table thead {
   background: linear-gradient(135deg, var(--color-primary), var(--color-primary-light));
 }
@@ -405,5 +424,52 @@
 @media (max-width: 768px) {
   .rooms-app { padding: var(--space-lg) var(--space-md); }
   .form-grid { grid-template-columns: 1fr; }
+  .room-table {
+    table-layout: auto;
+    min-width: 600px;
+  }
   .room-table th, .room-table td { padding: 0.75rem; }
+}
+
+/* ──────────────────────────────────────────────
+   9. CENTRAGE DES ÉQUIPEMENTS ET DESCRIPTION VIDE
+────────────────────────────────────────────── */
+/* Centrage du tiret dans la colonne Description quand vide */
+.description-empty {
+    text-align: center;
+    color: var(--color-text-muted);
+    font-style: italic;
+}
+
+/* Centrage de la colonne équipements */
+.equipment-cell {
+    text-align: center;
+    vertical-align: middle;
+}
+
+.equipment-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    justify-content: center;
+    align-items: center;
+}
+
+.equipment-badge {
+    display: inline-block;
+    background: var(--color-surface-alt);
+    color: var(--color-primary);
+    font-size: 0.9rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 20px;
+    white-space: nowrap;
+}
+
+.no-equipment {
+    display: inline-block;
+    color: var(--color-text-muted);
+    font-size: 1rem;
+    font-weight: normal;
+    text-align: center;
+    width: 100%;
 }

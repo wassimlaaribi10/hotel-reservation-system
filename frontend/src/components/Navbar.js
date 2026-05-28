@@ -19,6 +19,12 @@ const Navbar = () => {
             <Link to="/clients">👥 Clients</Link>
             <Link to="/rooms">🛏️ Chambres</Link>
             <Link to="/invoices">🧾 Factures</Link>
+            {user?.role === 'admin' && (
+                <Link to="/users">👥 Utilisateurs</Link>
+            )}
+            {user?.role === 'admin' && (
+                <Link to="/seasonal-prices">💰 Tarifs saisonniers</Link>
+            )}
             <div className="user-info">
                 <span className="user-email">{user?.email} ({user?.role})</span>
                 <button className="logout-btn" onClick={handleLogout}>Déconnexion</button>

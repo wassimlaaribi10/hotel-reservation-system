@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import './Login.css';
@@ -25,7 +25,6 @@ const IconAlert = () => (
     </svg>
 );
 
-/* Icône hôtel (bâtiment) */
 const HotelSVG = () => (
     <svg viewBox="0 0 48 48" strokeLinecap="round" strokeLinejoin="round">
         <rect x="8" y="14" width="32" height="28" rx="1"/>
@@ -53,11 +52,11 @@ const PARTICLES = Array.from({ length: 18 }, (_, i) => ({
    Composant Login
 ════════════════════════════════════════════════════════════════════ */
 const Login = () => {
-    const [email, setEmail]       = useState('');
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [error, setError]       = useState('');
-    const { login, loading }      = useAuth();
-    const navigate                = useNavigate();
+    const [error, setError] = useState('');
+    const { login, loading } = useAuth();
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -76,7 +75,6 @@ const Login = () => {
 
             {/* ── Colonne gauche décorative ── */}
             <div className="login-visual">
-
                 {/* Particules */}
                 <div className="particles">
                     {PARTICLES.map(p => (
@@ -84,11 +82,11 @@ const Login = () => {
                             key={p.id}
                             className="particle"
                             style={{
-                                width:               p.size,
-                                height:              p.size,
-                                left:                `${p.left}%`,
-                                animationDuration:   `${p.dur}s`,
-                                animationDelay:      `${p.delay}s`,
+                                width: p.size,
+                                height: p.size,
+                                left: `${p.left}%`,
+                                animationDuration: `${p.dur}s`,
+                                animationDelay: `${p.delay}s`,
                             }}
                         />
                     ))}
@@ -131,7 +129,6 @@ const Login = () => {
                     <div className="form-divider" />
 
                     <form onSubmit={handleSubmit}>
-
                         <div className="field">
                             <label className="field-label">
                                 <IconMail /> Email professionnel
@@ -190,9 +187,19 @@ const Login = () => {
                     <div className="login-footer">
                         Accès réservé au personnel autorisé
                     </div>
+
+                    {/* BOUTON ACCÈS CLIENT (ajout) */}
+                    <div className="client-access-wrapper">
+                        <button
+                            className="client-access-btn"
+                            onClick={() => window.location.href = '/client-history'}
+                        >
+                            👤 Accès client (consulter mes réservations)
+                        </button>
+                    </div>
+
                 </div>
             </div>
-
         </div>
     );
 };

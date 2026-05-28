@@ -8,6 +8,7 @@ const roomController = require('../controllers/roomController');
 const reservationController = require('../controllers/reservationController');
 const invoiceController = require('../controllers/invoiceController');
 const equipmentController = require('../controllers/equipmentController');
+const seasonalPriceController = require('../controllers/seasonalPriceController');
 
 // Middleware
 const { authMiddleware, adminOnly, receptionistOrAdmin } = require('../middleware/authMiddleware');
@@ -56,6 +57,21 @@ router.post('/rooms/:roomId/equipment/:equipmentId', authMiddleware, adminOnly, 
 router.delete('/rooms/:roomId/equipment/:equipmentId', authMiddleware, adminOnly, equipmentController.removeFromRoom);
 router.get('/rooms/:roomId/equipment', authMiddleware, adminOnly, equipmentController.getRoomEquipment);
 
+// Admin user management (admin only)
+const adminUserController = require('../controllers/adminUserController');
 
+router.get('/admin/users', authMiddleware, adminOnly, adminUserController.getAllUsers);
+router.post('/admin/users', authMiddleware, adminOnly, adminUserController.createUser);
+router.put('/admin/users/:id', authMiddleware, adminOnly, adminUserController.updateUser);
+
+// Seasonal prices management (admin only)
+router.get('/admin/seasonal-prices', authMiddleware, adminOnly, seasonalPriceController.getAll);
+router.post('/admin/seasonal-prices', authMiddleware, adminOnly, seasonalPriceController.create);
+router.put('/admin/seasonal-prices/:id', authMiddleware, adminOnly, seasonalPriceController.update);
+router.delete('/admin/seasonal-prices/:id', authMiddleware, adminOnly, seasonalPriceController.delete);
+
+
+// Public route for client history (by ID card number)
+router.get('/public/client-reservations/:idCardNumber', clientController.getReservationsByIdCard);
 
 module.exports = router;

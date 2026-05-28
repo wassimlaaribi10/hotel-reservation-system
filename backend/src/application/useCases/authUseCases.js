@@ -12,13 +12,14 @@ class AuthUseCases {
         if (existing) throw new Error('User already exists');
 
         const hashedPassword = await bcrypt.hash(password, 10);
-        const user = new User(null, email, hashedPassword, role);
+        const user = new User(null, email, hashedPassword, role, true);
         return await this.userRepository.create(user);
     }
 
     async loginUser(email, password) {
         const user = await this.userRepository.findByEmail(email);
         if (!user) throw new Error('Invalid credentials');
+        if (!user.isActive) throw new Error('Account disabled');
 
         const isValid = await bcrypt.compare(password, user.passwordHash);
         if (!isValid) throw new Error('Invalid credentials');

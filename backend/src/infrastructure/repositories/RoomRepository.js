@@ -53,9 +53,23 @@ class RoomRepository {
     }
 
     async findAll() {
-        const query = `SELECT * FROM rooms`;
+        const query = `
+            SELECT r.*, 
+                   COALESCE(
+                       (SELECT json_agg(e.name) 
+                        FROM room_equipment re 
+                        JOIN equipment e ON re.equipment_id = e.id 
+                        WHERE re.room_id = r.id), 
+                       '[]'::json
+                   ) as equipment_names
+            FROM rooms r
+        `;
         const result = await pool.query(query);
-        return result.rows.map(row => new Room(row.id, row.room_number, row.type, row.floor, row.capacity, row.description, row.is_active));
+        return result.rows.map(row => {
+            const room = new Room(row.id, row.room_number, row.type, row.floor, row.capacity, row.description, row.is_active);
+            room.equipmentNames = row.equipment_names || []; // ajoute les équipements sous forme de tableau
+            return room;
+        });
     }
 
     // Find available rooms between check-in and check-out, optionally filtered by type

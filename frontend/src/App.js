@@ -8,6 +8,10 @@ import Reservations from './pages/Reservations';
 import Invoices from './pages/Invoices';
 import Availability from './pages/Availability';
 import Navbar from './components/Navbar';
+import Users from './pages/Users';
+import SeasonalPrices from './pages/SeasonalPrices';
+import ClientHistory from './pages/ClientHistory';
+
 
 // Protected route wrapper
 const ProtectedRoute = ({ children, allowedRoles = [] }) => {
@@ -53,6 +57,17 @@ function App() {
                         </ProtectedRoute>
                     } />
                     <Route path="/" element={<Navigate to="/reservations" />} />
+                    <Route path="/users" element={
+                        <ProtectedRoute allowedRoles={['admin']}>
+                            <Users />
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/seasonal-prices" element={
+                        <ProtectedRoute allowedRoles={['admin']}>
+                            <SeasonalPrices />
+                        </ProtectedRoute>
+                    } />
+                    <Route path="/client-history" element={<ClientHistory />} />
                 </Routes>
             </div>
         </BrowserRouter>

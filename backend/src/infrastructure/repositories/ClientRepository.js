@@ -45,12 +45,12 @@ class ClientRepository {
 
     // NEW METHOD
     async findByIdCardNumber(idCardNumber) {
-        const query = `SELECT * FROM clients WHERE id_card_number = $1`;
+        const query = `SELECT * FROM clients WHERE LOWER(id_card_number) = LOWER($1)`;
         const result = await pool.query(query, [idCardNumber]);
         if (result.rows.length === 0) return null;
         const row = result.rows[0];
         return new Client(row.id, row.first_name, row.last_name, row.id_card_number,
-                         row.address, row.phone, row.email, row.is_active);
+                        row.address, row.phone, row.email, row.is_active);
     }
 
     async update(client) {

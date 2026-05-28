@@ -1,0 +1,155 @@
+/* ============================================================
+   Gestion des utilisateurs (même style que Clients)
+   ============================================================ */
+.users-app {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: var(--space-xl) var(--space-lg);
+    animation: pageIn 0.5s var(--transition-slow) both;
+}
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-xl);
+    padding-bottom: var(--space-lg);
+    border-bottom: 1px solid var(--color-border);
+    position: relative;
+}
+.header::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 64px;
+    height: 2px;
+    background: linear-gradient(90deg, var(--color-gold), var(--color-gold-light));
+}
+h1 {
+    font-family: var(--font-display);
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+    font-weight: 300;
+    color: var(--color-primary);
+}
+h1::before { content: '✦ '; color: var(--color-gold); font-size: 0.6em; vertical-align: middle; }
+
+.btn-add {
+    background: linear-gradient(135deg, var(--color-primary), var(--color-primary-light));
+    color: var(--color-gold-light);
+    padding: 0.65rem 1.4rem;
+    border-radius: var(--radius-md);
+    font-weight: 500;
+    text-transform: uppercase;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.btn-add:hover { transform: translateY(-2px); box-shadow: var(--shadow-gold); }
+
+.form-card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-top: 3px solid var(--color-gold);
+    border-radius: var(--radius-lg);
+    padding: var(--space-xl);
+    margin-bottom: var(--space-xl);
+    box-shadow: var(--shadow-md);
+}
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: var(--space-md);
+}
+.form-grid input, .form-grid select {
+    width: 100%;
+    padding: 0.65rem 1rem;
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+}
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    cursor: pointer;
+}
+.btn-submit, .btn-cancel {
+    padding: 0.65rem 1.8rem;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    text-transform: uppercase;
+    cursor: pointer;
+}
+.btn-submit { background: linear-gradient(135deg, var(--color-gold-dark), var(--color-gold)); color: white; border: none; }
+.btn-cancel { background: transparent; border: 1px solid var(--color-border); color: var(--color-text-muted); margin-left: var(--space-md); }
+
+.table-card {
+    background: var(--color-surface);
+    border-radius: var(--radius-lg);
+    overflow-x: auto;
+    box-shadow: var(--shadow-md);
+}
+.users-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 600px;
+}
+.users-table thead {
+    background: linear-gradient(135deg, var(--color-primary), var(--color-primary-light));
+}
+.users-table th {
+    padding: 0.9rem 1rem;
+    color: var(--color-gold-light);
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+.users-table td {
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid var(--color-border);
+}
+.users-table tr:hover td { background: var(--color-surface-alt); }
+
+.btn-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border: none;
+    border-radius: var(--radius-sm);
+    background: var(--color-surface-alt);
+    margin-right: var(--space-xs);
+    cursor: pointer;
+    transition: transform 0.15s;
+}
+.btn-action:hover { transform: translateY(-1px); box-shadow: var(--shadow-md); }
+.btn-edit:hover { background: #eaf0ff; }
+.btn-toggle { background: var(--color-surface-alt); }
+.btn-delete { background: #e74c3c; color: white; }
+.btn-delete:hover { background: #c0392b; }
+
+.loading-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-md);
+    padding: var(--space-2xl);
+}
+.spinner {
+    width: 36px;
+    height: 36px;
+    border: 2px solid var(--color-border);
+    border-top-color: var(--color-gold);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.error-message {
+    background: var(--color-danger-light);
+    border-left: 3px solid var(--color-danger);
+    padding: 0.75rem 1.2rem;
+    border-radius: var(--radius-md);
+    color: var(--color-danger);
+    margin-bottom: var(--space-lg);
+}
