@@ -1,6 +1,6 @@
 /* ============================================================
-   CLIENT HISTORY - Luxurious Dark Theme
-   Palette: Deep Navy · Antique Gold · Ivory
+   CLIENT HISTORY - Styles isolés (préfixe "ch-")
+   Aucun conflit avec Login.css ou autres pages
    ============================================================ */
 
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=Jost:wght@300;400;500;600&display=swap');
@@ -15,24 +15,26 @@
     font-family: 'Jost', 'Helvetica Neue', sans-serif;
 }
 
-.history-card {
+/* Carte centrale */
+.ch-card {
     background: rgba(255, 255, 255, 0.96);
     backdrop-filter: blur(2px);
     border-radius: 32px;
     padding: 2rem 2rem 2.5rem;
-    max-width: 900px;
+    max-width: 950px;
     width: 100%;
     box-shadow: 0 25px 45px -12px rgba(15, 31, 61, 0.25);
     border: 1px solid rgba(201, 168, 76, 0.2);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.history-card:hover {
-    transform: translateY(-4px);
+.ch-card:hover {
+    transform: translateY(-3px);
     box-shadow: 0 30px 55px -15px rgba(15, 31, 61, 0.3);
 }
 
-h1 {
+/* Titre */
+.ch-card h1 {
     font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: 2.4rem;
     font-weight: 400;
@@ -45,65 +47,80 @@ h1 {
     letter-spacing: 0.02em;
 }
 
-.input-group {
-    margin-bottom: 1.5rem;
+/* Formulaire inline */
+.ch-form {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 1rem;
+    margin-bottom: 1rem;
 }
 
-label {
+.ch-input-group {
+    flex: 3;
+    min-width: 180px;
+}
+
+.ch-input-group label {
     display: block;
     font-size: 0.75rem;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.1em;
     color: #0f1f3d;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.4rem;
 }
 
-input {
+.ch-input-group input {
     width: 100%;
     padding: 0.85rem 1.2rem;
-    background: #ffffff;
+    background: white;
     border: 1px solid #dcd9d0;
-    border-radius: 20px;
+    border-radius: 24px;
     font-size: 1rem;
-    font-family: 'Jost', sans-serif;
+    font-family: inherit;
     transition: all 0.2s ease;
 }
 
-input:focus {
+.ch-input-group input:focus {
     outline: none;
     border-color: #c9a84c;
-    box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.15);
+    box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.2);
 }
 
-.btn-search {
+/* Bouton de recherche */
+.ch-btn-search {
     background: linear-gradient(135deg, #0f1f3d, #1a3260);
     color: #e2c97e;
     border: none;
-    padding: 0.85rem 1.2rem;
+    padding: 0.85rem 1.5rem;
     border-radius: 40px;
     font-weight: 600;
     font-size: 1rem;
-    width: 20%;
     cursor: pointer;
     transition: all 0.25s ease;
-    display: block;
-    margin: 0 auto;
-    text-align: center;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    white-space: nowrap;
     box-shadow: 0 4px 12px rgba(15, 31, 61, 0.15);
+    width: auto;
+    min-width: 130px;
 }
 
-.btn-search:hover:not(:disabled) {
+.ch-btn-search:hover:not(:disabled) {
     transform: translateY(-2px);
     box-shadow: 0 8px 20px rgba(15, 31, 61, 0.2);
     background: linear-gradient(135deg, #1a3260, #0f1f3d);
 }
 
-.btn-search:active:not(:disabled) {
+.ch-btn-search:active:not(:disabled) {
     transform: translateY(1px);
 }
 
-.error-message {
+/* Message d'erreur */
+.ch-error-message {
     background: #fff0f0;
     border-left: 4px solid #9b2335;
     padding: 0.8rem 1.2rem;
@@ -116,17 +133,18 @@ input:focus {
     gap: 0.5rem;
 }
 
-.error-message::before {
+.ch-error-message::before {
     content: '⚠️';
     font-size: 1rem;
 }
 
-.results {
+/* Résultats */
+.ch-results {
     margin-top: 2rem;
     animation: fadeInUp 0.4s ease;
 }
 
-.results h2 {
+.ch-results h2 {
     font-family: 'Cormorant Garamond', serif;
     font-size: 1.6rem;
     font-weight: 400;
@@ -136,28 +154,30 @@ input:focus {
     margin-bottom: 1.2rem;
 }
 
-.reservations-list {
+/* Liste des réservations */
+.ch-reservations-list {
     display: flex;
     flex-direction: column;
     gap: 1rem;
 }
 
-.reservation-card {
-    background: #ffffff;
+/* Carte réservation */
+.ch-reservation-card {
+    background: white;
     border-radius: 24px;
     padding: 1rem 1.5rem;
     border: 1px solid #e9e3db;
     transition: all 0.2s ease;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
 }
 
-.reservation-card:hover {
+.ch-reservation-card:hover {
     transform: translateX(4px);
     border-left: 4px solid #c9a84c;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
 }
 
-.res-header {
+.ch-res-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -167,7 +187,8 @@ input:focus {
     color: #0f1f3d;
 }
 
-.status {
+/* Badge de statut */
+.ch-status {
     display: inline-block;
     padding: 0.2rem 0.8rem;
     border-radius: 40px;
@@ -177,13 +198,17 @@ input:focus {
     letter-spacing: 0.05em;
 }
 
-.status.pending { background: #fff8e6; color: #a07000; }
-.status.confirmed { background: #eaf3ff; color: #1d5fa6; }
-.status.checked_in { background: #eafaf2; color: #2e7d52; }
-.status.checked_out { background: #eef2f6; color: #6b6b80; }
-.status.cancelled { background: #fee2e2; color: #9b2335; }
+.ch-status.pending    { background: #fff8e6; color: #a07000; }
+.ch-status.confirmed  { background: #eaf3ff; color: #1d5fa6; }
+.ch-status.checked_in { background: #eafaf2; color: #2e7d52; }
+.ch-status.checked_out{ background: #eef2f6; color: #6b6b80; }
+.ch-status.cancelled  { background: #fee2e2; color: #9b2335; }
 
-.res-dates, .res-room, .res-guests, .res-price {
+/* Lignes d'information */
+.ch-res-dates,
+.ch-res-room,
+.ch-res-guests,
+.ch-res-price {
     font-size: 0.9rem;
     color: #334155;
     margin: 0.4rem 0;
@@ -192,12 +217,13 @@ input:focus {
     gap: 0.5rem;
 }
 
-.res-dates::before { content: '📅'; font-size: 0.9rem; }
-.res-room::before { content: '🛏️'; font-size: 0.9rem; }
-.res-guests::before { content: '👥'; font-size: 0.9rem; }
-.res-price::before { content: '💰'; font-size: 0.9rem; }
+/* Icônes (optionnelles, vous pouvez les retirer si vous préférez le texte seul) */
+.ch-res-dates::before   { content: '📅'; font-size: 0.9rem; }
+.ch-res-room::before    { content: '🛏️'; font-size: 0.9rem; }
+.ch-res-guests::before  { content: '👥'; font-size: 0.9rem; }
+.ch-res-price::before   { content: '💰'; font-size: 0.9rem; }
 
-/* Animation */
+/* Animation d'apparition */
 @keyframes fadeInUp {
     from {
         opacity: 0;
@@ -209,21 +235,29 @@ input:focus {
     }
 }
 
-/* Responsive */
-@media (max-width: 600px) {
+/* Responsive : sur mobile, formulaire en colonne */
+@media (max-width: 640px) {
     .client-history-app {
         padding: 1rem;
     }
-    .history-card {
+    .ch-card {
         padding: 1.5rem;
     }
-    h1 {
+    .ch-card h1 {
         font-size: 1.8rem;
     }
-    .reservation-card {
+    .ch-form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .ch-btn-search {
+        width: 100%;
+        margin-top: 0.5rem;
+    }
+    .ch-reservation-card {
         padding: 0.8rem 1rem;
     }
-    .res-header {
+    .ch-res-header {
         flex-direction: column;
         align-items: flex-start;
         gap: 0.3rem;

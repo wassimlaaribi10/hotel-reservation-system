@@ -9,6 +9,7 @@ const Availability = () => {
     const [availableRooms, setAvailableRooms] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const [hasSearched, setHasSearched] = useState(false); // 👈 AJOUT
 
     useEffect(() => {
         if (error) {
@@ -24,6 +25,7 @@ const Availability = () => {
             return;
         }
         setLoading(true);
+        setHasSearched(true); // 👈 on a effectué une recherche
         try {
             let url = `/rooms/available?checkIn=${checkIn}&checkOut=${checkOut}`;
             if (roomType) url += `&type=${roomType}`;
@@ -62,9 +64,7 @@ const Availability = () => {
                             </select>
                         </div>
                         <div className="form-field button-field">
-                            <button type="submit" className="btn-search">
-                                🔍 Rechercher
-                            </button>
+                           <button type="submit" className="btn-availability-search">🔍 Rechercher</button>
                         </div>
                     </div>
                 </form>
@@ -91,7 +91,8 @@ const Availability = () => {
                 </div>
             )}
 
-            {!loading && availableRooms.length === 0 && checkIn && checkOut && (
+            {/* Message affiché UNIQUEMENT après une recherche infructueuse */}
+            {hasSearched && !loading && availableRooms.length === 0 && (
                 <div className="room-card no-result">Aucune chambre disponible pour ces dates.</div>
             )}
         </div>

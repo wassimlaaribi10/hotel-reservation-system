@@ -64,6 +64,13 @@ class ReservationUseCases {
     if (reservation.status !== 'confirmed' && reservation.status !== 'pending') {
         throw new Error('Reservation cannot be checked in');
     }
+
+    // Vérifier si une autre réservation occupe déjà la chambre
+    const active = await this.reservationRepository.findActiveByRoom(reservation.roomId);
+    if (active && active.id !== reservation.id) {
+        throw new Error('Room is already occupied by another guest');
+    }
+
     reservation.status = 'checked_in';
     reservation.checkedInAt = new Date();
     return await this.reservationRepository.update(reservation);

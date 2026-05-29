@@ -146,6 +146,20 @@ class ReservationRepository {
             row.number_of_guests, row.status, row.total_price
         ));
     }
+
+    async findActiveByRoom(roomId) {
+    const query = `SELECT * FROM reservations WHERE room_id = $1 AND status = 'checked_in'`;
+    const result = await pool.query(query, [roomId]);
+    if (result.rows.length === 0) return null;
+    const row = result.rows[0];
+    return new Reservation(
+        row.id, row.client_id, row.room_id,
+        row.check_in_date, row.check_out_date,
+        row.number_of_guests, row.status, row.total_price
+    );
 }
+
+}
+
 
 module.exports = ReservationRepository;

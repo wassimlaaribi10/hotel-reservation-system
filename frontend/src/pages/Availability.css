@@ -80,7 +80,7 @@
 .button-field {
   justify-content: flex-end;
 }
-.btn-search {
+.btn-availability-search {
   background: linear-gradient(135deg, var(--color-primary), var(--color-primary-light));
   color: var(--color-gold-light);
   padding: 0.7rem 1rem;
@@ -97,7 +97,7 @@
   justify-content: center;
   gap: var(--space-sm);
 }
-.btn-search:hover {
+.btn-availability-search:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-gold);
 }
