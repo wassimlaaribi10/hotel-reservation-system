@@ -251,7 +251,7 @@ http://localhost:3000
 
 | Rôle           | Email                                       | Mot de passe                               |
 | -------------- | ------------------------------------------- | ------------------------------------------ |
-| Administrateur | [admin@hotel.com]                           | Celui défini lors de la génération du hash |
+| Administrateur | admin@hotel.com                             | Celui défini lors de la génération du hash |
 | Réceptionniste | À créer depuis l'interface d'administration | Défini lors de sa création                 |
 
 ---
