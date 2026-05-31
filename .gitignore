@@ -1,12 +1,35 @@
-# Ignorer les dossiers node_modules à tous les niveaux
+# Dossiers node_modules (tous niveaux)
 node_modules/
-backend/node_modules/
-frontend/node_modules/
 
-# Fichiers d’environnement
+# Fichiers d'environnement
 .env
 .env.*
+!.env.example
+
+# Fichiers de logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
 # Fichiers système
 .DS_Store
 Thumbs.db
+
+# Fichiers de dépendances (optionnel : si vous ne voulez pas versionner les lockfiles à la racine)
+package-lock.json
+yarn.lock
+
+# Dossiers de build / cache
+dist/
+build/
+.cache/
+.parcel-cache/
+
+# IDE / éditeurs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
