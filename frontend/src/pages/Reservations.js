@@ -397,27 +397,35 @@ const Reservations = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {reservations.map(res => (
-                            <tr key={res.id}>
-                                <td>{res.id}</td>
-                                <td>{res.clientName || `#${res.clientId}`}</td>
-                                <td>{res.roomNumber || `#${res.roomId}`}</td>
-                                <td>{new Date(res.checkInDate).toLocaleDateString()}</td>
-                                <td>{new Date(res.checkOutDate).toLocaleDateString()}</td>
-                                <td>{res.numberOfGuests}</td>
-                                <td style={{ color: getStatusColor(res.status), fontWeight: 'bold' }}>{res.status}</td>
-                                <td>
-                                    {(res.status === 'pending' || res.status === 'confirmed') && <button className="btn-action" onClick={() => handleEditClick(res)}>✏️</button>}
-                                    {res.status === 'pending' && <button className="btn-action" onClick={() => handleConfirm(res.id)}>✅</button>}
-                                    {res.status === 'confirmed' && <button className="btn-action" onClick={() => handleCheckIn(res.id)}>▶️</button>}
-                                    {res.status === 'checked_in' && <button className="btn-action" onClick={() => handleCheckOut(res.id)}>⏹️</button>}
-                                    {(res.status === 'pending' || res.status === 'confirmed') && <button className="btn-action" onClick={() => handleCancel(res.id)}>❌</button>}
-                                    {res.status === 'checked_out' && (
-                                        <button className="btn-action" onClick={() => handleDownloadInvoicePDF(res.id)}>📥</button>
-                                    )}
+                        {reservations.length === 0 ? (
+                            <tr>
+                                <td colSpan="8" style={{ textAlign: 'center', padding: '2rem', color: '#6b6b80' }}>
+                                    Aucune réservation trouvée.
                                 </td>
                             </tr>
-                        ))}
+                        ) : (
+                            reservations.map(res => (
+                                <tr key={res.id}>
+                                    <td>{res.id}</td>
+                                    <td>{res.clientName || `#${res.clientId}`}</td>
+                                    <td>{res.roomNumber || `#${res.roomId}`}</td>
+                                    <td>{new Date(res.checkInDate).toLocaleDateString()}</td>
+                                    <td>{new Date(res.checkOutDate).toLocaleDateString()}</td>
+                                    <td>{res.numberOfGuests}</td>
+                                    <td style={{ color: getStatusColor(res.status), fontWeight: 'bold' }}>{res.status}</td>
+                                    <td>
+                                        {(res.status === 'pending' || res.status === 'confirmed') && <button className="btn-action" onClick={() => handleEditClick(res)}>✏️</button>}
+                                        {res.status === 'pending' && <button className="btn-action" onClick={() => handleConfirm(res.id)}>✅</button>}
+                                        {res.status === 'confirmed' && <button className="btn-action" onClick={() => handleCheckIn(res.id)}>▶️</button>}
+                                        {res.status === 'checked_in' && <button className="btn-action" onClick={() => handleCheckOut(res.id)}>⏹️</button>}
+                                        {(res.status === 'pending' || res.status === 'confirmed') && <button className="btn-action" onClick={() => handleCancel(res.id)}>❌</button>}
+                                        {res.status === 'checked_out' && (
+                                            <button className="btn-action" onClick={() => handleDownloadInvoicePDF(res.id)}>📥</button>
+                                        )}
+                                    </td>
+                                </tr>
+                            ))
+                        )}
                     </tbody>
                 </table>
             </div>
