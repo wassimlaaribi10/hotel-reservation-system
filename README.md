@@ -156,24 +156,16 @@ Remplacez `LE_HASH_OBTENU` par le hash précédemment généré.
 
 ---
 
-## 4. Ajouter des clients de test (optionnel)
+## 4. Données de test intégrées
 
-Pour tester rapidement l'application, vous pouvez insérer les clients suivants :
+Le fichier `database.sql` contient déjà des données de test prêtes à l’emploi :
 
-```sql
-INSERT INTO clients (
-    first_name,
-    last_name,
-    id_card_number,
-    address,
-    phone,
-    email,
-    is_active
-)
-VALUES
-('Jean', 'Dupont', 'JD123', '12 rue de Paris, 75001 Paris', '0612345678', 'jean.dupont@email.com', true),
-('Marie', 'Curie', 'MC456', '5 avenue des Sciences, 75005 Paris', '0698765432', 'marie.curie@email.com', true);
-```
+- **Clients** : Jean Dupont (CIN `JD123`), Marie Curie (CIN `MC456`), etc.
+- **Chambres** : 101, 102, 201, 202
+- **Équipements** : Climatisation, Wi‑Fi, Mini‑bar, Vue mer, Balcon
+- **Tarifs saisonniers** : haute et basse saison
+- **Réservations** : une réservation en cours, une confirmée, une terminée, une annulée
+- **Facture** : associée à la réservation terminée
 
 ---
 

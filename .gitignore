@@ -1,0 +1,21 @@
+# Dossiers node_modules (dans backend, frontend, et partout)
+node_modules/
+
+# Fichiers d'environnement
+.env
+.env.*
+!.env.example
+
+# Fichiers système
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Dossiers de build (si vous en avez dans backend/frontend)
+dist/
+build/
