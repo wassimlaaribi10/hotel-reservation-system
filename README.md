@@ -106,10 +106,10 @@ Vous pouvez utiliser :
 
 ### Création des tables
 
-Exécutez le script suivant situé à la racine du projet :
+Exécutez le script suivant situé dans le dossier `sql` à la racine du projet :
 
 ```txt
-database.sql
+sql/database.sql
 ```
 
 Ce script crée automatiquement l'ensemble des tables nécessaires au fonctionnement de l'application.
