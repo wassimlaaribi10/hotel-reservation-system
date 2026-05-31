@@ -81,7 +81,7 @@ const ClientHistory = () => {
                                             {res.status === 'cancelled' && res.cancellationFee ? (
                                                 <>Pénalité : {res.cancellationFee} €</>
                                             ) : (
-                                                <>Prix total : {res.totalPrice ? `${res.totalPrice} €` : 'N/A'}</>
+                                                <>Prix total : {res.total_price ? `${res.total_price} €` : (res.totalPrice ? `${res.totalPrice} €` : 'N/A')}</>
                                             )}
                                         </div>
                                     </div>
