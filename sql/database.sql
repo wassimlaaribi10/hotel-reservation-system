@@ -93,6 +93,13 @@ CREATE TABLE invoices (
 -- Données de test (INSERT)
 -- =====================================================
 
+-- clients
+INSERT INTO clients (first_name, last_name, id_card_number, address, phone, email, is_active) VALUES
+('Jean', 'Dupont', 'JD123', '12 rue de Paris, 75001 Paris', '0612345678', 'jean.dupont@email.com', true),
+('Marie', 'Curie', 'MC456', '5 avenue des Sciences, 75005 Paris', '0698765432', 'marie.curie@email.com', true),
+('Sophie', 'Martin', 'SM789', '22 boulevard Victor Hugo, 13006 Marseille', '0678901234', 'sophie.martin@email.com', true),
+('Lucas', 'Bernard', 'LB321', '8 place de la République, 69002 Lyon', '0654321098', 'lucas.bernard@email.com', true);
+
 -- Chambres
 INSERT INTO rooms (room_number, type, floor, capacity, description, is_active) VALUES
 ('101', 'single', 1, 2, 'Chambre confortable avec vue sur jardin', true),
